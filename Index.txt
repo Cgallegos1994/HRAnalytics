@@ -1,0 +1,705 @@
+
+
+<p>
+	<title>HR Analytics</title>
+</p>
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+	* {
+		box-sizing: border-box;
+	}
+	/* Contenedor principal que fuerza el fondo y los estilos base */
+	
+	.hr_analytics_container {
+		margin: 0;
+		padding: 0;
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		/* Se añade !important para garantizar que esta regla anule cualquier otra */
+		background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+		color: #ffffff;
+		min-height: 100vh;
+		position: relative;
+		overflow-x: hidden;
+	}
+	/* Efectos de fondo animados (ahora aplicados a nuestro contenedor) */
+	
+	.hr_analytics_container::before {
+		content: '';
+		position: absolute;
+		/* Cambiado a absolute para que se contenga dentro de nuestro div */
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: radial-gradient(circle at 20% 80%, rgba(20, 213, 170, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 30, 112, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+		pointer-events: none;
+		z-index: 0;
+		/* Ajustado el z-index */
+	}
+	
+	.hr_wrapper {
+		padding: 2rem;
+		max-width: 1800px;
+		margin: 0 auto;
+		position: relative;
+		z-index: 1;
+		/* El contenido debe estar por encima de los efectos de fondo */
+	}
+	
+	.hr_header {
+		text-align: center;
+		margin-bottom: 3rem;
+		position: relative;
+	}
+	
+	.hr_header h1 {
+		font-size: clamp(2.5rem, 5vw, 4rem);
+		font-weight: 700;
+		margin-bottom: 1rem;
+		letter-spacing: -0.02em;
+	}
+	
+	.hr_highlight {
+		color: #14d5aa;
+		text-shadow: 0 0 20px rgba(20, 213, 170, 0.3);
+	}
+	
+	.hr_metal-text {
+		background: linear-gradient( 45deg, #e2e8f0 0%, #ffffff 20%, #ff1e70 35%, #e2e8f0 50%, #ffffff 65%, #ff1e70 80%, #e2e8f0 100%);
+		background-size: 200% auto;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		animation: hr_shine-reflect 3s linear infinite;
+	}
+	
+	@keyframes hr_shine-reflect {
+		0% {
+			background-position: 200% center;
+		}
+		100% {
+			background-position: -200% center;
+		}
+	}
+	
+	.hr_subtitle {
+		font-size: 1.2rem;
+		color: #94a3b8;
+		font-weight: 400;
+		margin-top: 0.5rem;
+	}
+	
+	.hr_search-container {
+		margin-bottom: 3rem;
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+	
+	.hr_search-box {
+		position: relative;
+		max-width: 500px;
+		flex: 1;
+		min-width: 300px;
+	}
+	
+	#hr_searchInput {
+		width: 100%;
+		padding: 1rem 1rem 1rem 3rem;
+		font-size: 1rem;
+		border: 2px solid rgba(148, 163, 184, 0.2);
+		border-radius: 16px;
+		background: rgba(15, 23, 42, 0.8);
+		color: #ffffff;
+		backdrop-filter: blur(10px);
+		transition: all 0.3s ease;
+		outline: none;
+	}
+	
+	#hr_searchInput:focus {
+		border-color: #14d5aa;
+		box-shadow: 0 0 0 4px rgba(20, 213, 170, 0.1);
+		transform: translateY(-2px);
+	}
+	
+	#hr_searchInput::placeholder {
+		color: #64748b;
+	}
+	
+	.hr_search-icon {
+		position: absolute;
+		left: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #64748b;
+		font-size: 1.2rem;
+		pointer-events: none;
+	}
+	
+	.hr_filter-buttons {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+	
+	.hr_filter-btn {
+		padding: 0.5rem 1rem;
+		border: 1px solid rgba(148, 163, 184, 0.3);
+		border-radius: 8px;
+		background: rgba(15, 23, 42, 0.6);
+		color: #94a3b8;
+		font-size: 0.9rem;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		backdrop-filter: blur(10px);
+	}
+	
+	.hr_filter-btn:hover,
+	.hr_filter-btn.hr_active {
+		background: #14d5aa;
+		color: #0f172a;
+		border-color: #14d5aa;
+		transform: translateY(-1px);
+	}
+	
+	.hr_stats-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 1rem;
+		margin-bottom: 3rem;
+	}
+	
+	.hr_stat-card {
+		background: rgba(30, 41, 59, 0.6);
+		border: 1px solid rgba(148, 163, 184, 0.1);
+		border-radius: 12px;
+		padding: 1.5rem;
+		text-align: center;
+		backdrop-filter: blur(10px);
+		transition: all 0.3s ease;
+	}
+	
+	.hr_stat-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+	}
+	
+	.hr_stat-number {
+		font-size: 2rem;
+		font-weight: 700;
+		color: #14d5aa;
+		margin-bottom: 0.25rem;
+	}
+	
+	.hr_stat-label {
+		font-size: 0.9rem;
+		color: #94a3b8;
+		font-weight: 500;
+	}
+	
+	.hr_grid-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 1.5rem;
+	}
+	
+	.hr_card {
+		background: rgba(30, 41, 59, 0.8);
+		border: 1px solid rgba(148, 163, 184, 0.1);
+		border-radius: 20px;
+		padding: 2rem;
+		transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+		color: #ffffff;
+		position: relative;
+		overflow: hidden;
+		backdrop-filter: blur(10px);
+		animation: hr_fadeInUp 0.6s ease forwards;
+	}
+	
+	.hr_card::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: linear-gradient(90deg, #14d5aa, #ff1e70, #3b82f6);
+		transform: scaleX(0);
+		transition: transform 0.4s ease;
+	}
+	
+	.hr_card:hover::before {
+		transform: scaleX(1);
+	}
+	
+	.hr_card:hover {
+		transform: translateY(-8px) scale(1.02);
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+		border-color: rgba(20, 213, 170, 0.3);
+	}
+	
+	.hr_card .hr_icon {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+		display: block;
+		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+	}
+	
+	.hr_card h2 {
+		font-size: 1.4rem;
+		margin-bottom: 0.75rem;
+		color: #ffffff !important;
+		font-weight: 600;
+		line-height: 1.3;
+	}
+	
+	.hr_card p {
+		font-size: 1rem;
+		color: #cbd5e1;
+		margin-bottom: 1.5rem;
+		line-height: 1.5;
+		font-weight: 400;
+	}
+	
+	.hr_btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: #ffffff;
+		background: linear-gradient(135deg, #14d5aa, #0ea5e9);
+		border: none;
+		padding: 0.75rem 1.5rem;
+		border-radius: 12px;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.95rem;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 12px rgba(20, 213, 170, 0.2);
+		position: relative;
+		overflow: hidden;
+	}
+	
+	.hr_btn::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		transition: left 0.5s ease;
+	}
+	
+	.hr_btn:hover::before {
+		left: 100%;
+	}
+	
+	.hr_btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 20px rgba(20, 213, 170, 0.3);
+	}
+	
+	.hr_btn:active {
+		transform: translateY(0);
+	}
+	
+	.hr_card.hr_hidden {
+		display: none;
+	}
+	
+	.hr_no-results {
+		text-align: center;
+		padding: 3rem;
+		color: #64748b;
+		font-size: 1.1rem;
+	}
+	
+	.hr_no-results.hr_hidden {
+		display: none;
+	}
+	
+	.hr_card .hr_status {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: #10b981;
+		box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+	}
+	
+	.hr_card .hr_status.hr_unavailable {
+		background: #64748b;
+		box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.2);
+	}
+	
+	@media (max-width: 768px) {
+		.hr_wrapper {
+			padding: 1rem;
+		}
+		.hr_search-container {
+			flex-direction: column;
+			gap: 1rem;
+		}
+		.hr_search-box {
+			min-width: unset;
+			width: 100%;
+		}
+		.hr_filter-buttons {
+			justify-content: center;
+		}
+		.hr_stats-container {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.hr_grid-container {
+			grid-template-columns: 1fr;
+		}
+	}
+	
+	@keyframes hr_fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	
+	.hr_card:nth-child(1) {
+		animation-delay: 0.1s;
+	}
+	
+	.hr_card:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+	
+	.hr_card:nth-child(3) {
+		animation-delay: 0.3s;
+	}
+	
+	.hr_card:nth-child(4) {
+		animation-delay: 0.4s;
+	}
+	
+	.hr_card:nth-child(5) {
+		animation-delay: 0.5s;
+	}
+	
+	.hr_card:nth-child(6) {
+		animation-delay: 0.6s;
+	}
+
+</style>
+<div class="hr_analytics_container">
+	<div class="hr_wrapper">
+		<header class="hr_header">
+
+			<h1><span class="hr_highlight">HR</span> <span class="hr_metal-text">Analytics</span></h1>
+
+			<p class="hr_subtitle">Centro de Inteligencia de Recursos Humanos</p>
+		</header>
+		<div class="hr_stats-container">
+			<div class="hr_stat-card">
+				<div class="hr_stat-number">17</div>
+				<div class="hr_stat-label">Informes Totales</div>
+			</div>
+			<div class="hr_stat-card">
+				<div class="hr_stat-number">17</div>
+				<div class="hr_stat-label">Disponibles</div>
+			</div>
+			<div class="hr_stat-card">
+				<div class="hr_stat-number">0</div>
+				<div class="hr_stat-label">En Desarrollo</div>
+			</div>
+			<div class="hr_stat-card">
+				<div class="hr_stat-number">100%</div>
+				<div class="hr_stat-label">Cobertura</div>
+			</div>
+		</div>
+		<div class="hr_search-container">
+			<div class="hr_search-box"><span class="hr_search-icon">🔍</span>
+				<input type="text" id="hr_searchInput" placeholder="Buscar informes por nombre, categoría o descripción..." autocomplete="off" value="">
+			</div>
+			<div class="hr_filter-buttons">
+				<button class="hr_filter-btn hr_active" data-filter="all">Todos</button>
+				<button class="hr_filter-btn" data-filter="disponible">Disponibles</button>
+				<button class="hr_filter-btn" data-filter="desarrollo">En Desarrollo</button>
+				<button class="hr_filter-btn" data-filter="absentismo">Absentismo</button>
+				<button class="hr_filter-btn" data-filter="formacion">Formaci&oacute;n</button>
+			</div>
+		</div>
+		<div class="hr_grid-container" id="cardGrid">
+			<div class="hr_card" data-status="disponible" data-tags="cierre anual 2024 desempeño bonus global">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📈</div>
+
+				<h2>Cierre Anual 2024</h2>
+
+				<p>Consulta los datos globales a cierre de a&ntilde;o y revisa desempe&ntilde;o y bonus.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/55e53ae1-4388-4c49-9e5b-6c596fda2f4e" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="analisis diario plantilla cofares">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🧾</div>
+
+				<h2>An&aacute;lisis diario</h2>
+
+				<p>Explora datos diarios de la plantilla en Cofares.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/d7b0bdcd-1055-472a-b107-a75df9cc644f" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="cuadro integral rrhh recursos humanos">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📋</div>
+
+				<h2>Cuadro Integral RRHH</h2>
+
+				<p>Accede al informe integral de RRHH.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/068ed303-f94f-4f06-9ea2-bd6d9b950c54/page/QWy9D" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="absentismo operaciones territorio almacen">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📉</div>
+
+				<h2>Absentismo Operaciones</h2>
+
+				<p>Consulta datos de absentismo por territorio y almac&eacute;n.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/f2d31890-dc9e-49ce-b718-8761ccd56bae/page/0u53B" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="absentismo core cofares responde">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🧮</div>
+
+				<h2>Absentismo CORE</h2>
+
+				<p>An&aacute;lisis detallado del absentismo en Cofares Responde.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/a1099d57-6a4c-4d6c-aa54-a97516ced89d" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="formacion anualizada acciones formativas organizativos">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🎓</div>
+
+				<h2>Formaci&oacute;n anualizada</h2>
+
+				<p>Datos sobre acciones formativas por criterios organizativos.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/6de11354-03fa-472a-af39-9006260bdcbf" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="calidad seleccion seguimiento mensual criterios">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">✔️</div>
+
+				<h2>Calidad de Selecci&oacute;n</h2>
+
+				<p>Seguimiento mensual de criterios de calidad de selecci&oacute;n.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/0367ed2b-458b-4c61-a94d-95d8ba657258/page/p_7mjo4x7lfd" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="rotacion indicadores segmentados unidad puesto">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🔄</div>
+
+				<h2>Rotaci&oacute;n</h2>
+
+				<p>Indicadores de rotaci&oacute;n segmentados por unidad o puesto.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/b8bee30c-8dde-442c-a703-cb0b61e14788/page/p_7ks6z6z2gd" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="absentismo cofares evolucion datos">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📊</div>
+
+				<h2>Absentismo Cofares</h2>
+
+				<p>Consulta la evoluci&oacute;n de datos de absentismo en Cofares.</p><a class="hr_btn" href="https://lookerstudio.google.com/u/0/reporting/b19b80b6-5b72-4384-b842-2ec2bc74b4cc/page/GXO1D" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="indemnizaciones seguimiento pagadas presupuestadas">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">💼</div>
+
+				<h2>Indemnizaciones</h2>
+
+				<p>Seguimiento de indemnizaciones pagadas y presupuestadas.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/5879901d-3421-4040-94de-d6ebb7692d5f" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="funciones comerciales almacen analisis">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🔑</div>
+
+				<h2>Funciones comerciales almac.</h2>
+
+				<p>Consulta este an&aacute;lisis de funciones comerciales por almac&eacute;n.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/035d8427-c6df-4cae-abf4-c8256b9cff32" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="analisis bajas comerciales motivos perfiles">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🔍</div>
+
+				<h2>An&aacute;lisis de bajas comerciales</h2>
+
+				<p>Analiza en detalle los motivos de baja de perfiles comerciales.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/bae32e88-9125-45cf-9448-62e484d78c3a" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="plantilla seguimiento tableau ftes reales presupuestados">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📊</div>
+
+				<h2>Plantilla Seguimiento - Tableau</h2>
+
+				<p>Sintetiza FTEs reales versus presupuestados.</p><a class="hr_btn" href="https://eu-west-1a.online.tableau.com/t/cofares/views/PlanificacionPlantilla/PlanificacionPlantilla/b896d59e-b9f3-4b3a-831e-0bd314ae5da4/80fd2eb2-108f-431d-bd14-76103803bcf9" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="analisis plazas parking welnia cuadro mando">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🚗</div>
+
+				<h2>An&aacute;lisis Plazas Parking - Welnia</h2>
+
+				<p>Cuadro de mando para uso correcto de plazas de parking.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/c3ff082d-abc6-40e4-9dfb-1bbf0f2ba0ed" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="ausencias ptmw tableau tipologia almacen">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📅</div>
+
+				<h2>Ausencias (PTMW) - Tableau</h2>
+
+				<p>Accede a ausencias extra&iacute;das por tipolog&iacute;a y almac&eacute;n.</p><a class="hr_btn" href="https://eu-west-1a.online.tableau.com/#/site/cofares/views/Absentismos_Test/Absentismos_Test" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="formacion prl seguimiento formaciones asociadas prevencion">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">📘</div>
+
+				<h2>PRL</h2>
+
+				<p>Informe de seguimiento PRL y formaciones asociadas.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/156bf9fc-0edb-4e82-bba8-3523632e1261" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+			<div class="hr_card" data-status="disponible" data-tags="entrevistas offboarding respuestas formulario salida">
+				<div class="hr_status">
+					<br>
+				</div>
+				<div class="hr_icon">🗨️</div>
+
+				<h2>Entrevistas de Offboarding</h2>
+
+				<p>Respuestas recogidas del formulario de salida.</p><a class="hr_btn" href="https://lookerstudio.google.com/reporting/a1e8e297-dca6-4a64-bb9c-74df2e988521" rel="noopener noreferrer" target="_blank">&nbsp;Ver informe &rarr;&nbsp;</a></div>
+		</div>
+		<div class="hr_no-results hr_hidden">
+			<div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+
+			<p>No se encontraron informes que coincidan con tu b&uacute;squeda.</p>
+
+			<p>Intenta con otros t&eacute;rminos o usa los filtros disponibles.</p>
+		</div>
+	</div>
+</div>
+<script>
+	document.addEventListener('DOMContentLoaded', () =>
+	{
+		const searchInput = document.getElementById('hr_searchInput');
+		const filterButtons = document.querySelectorAll('.hr_filter-btn');
+		const cards = document.querySelectorAll('.hr_card');
+		const noResults = document.querySelector('.hr_no-results');
+
+		let currentFilter = 'all';
+
+		function filterCards()
+		{
+			const searchTerm = searchInput.value.toLowerCase().trim();
+			let visibleCount = 0;
+
+			cards.forEach(card =>
+			{
+				const tags = card.dataset.tags.toLowerCase();
+				const title = card.querySelector('h2').textContent.toLowerCase();
+				const description = card.querySelector('p').textContent.toLowerCase();
+				const status = card.dataset.status;
+
+				// --- PASO 1: Comprobar si la tarjeta coincide con el FILTRO del botón activo ---
+				let matchesFilter = false;
+				if (currentFilter === 'all')
+				{
+					matchesFilter = true;
+				}
+				else if (currentFilter === 'disponible' || currentFilter === 'desarrollo')
+				{
+					if (status === currentFilter)
+					{
+						matchesFilter = true;
+					}
+				}
+				else
+				{
+					if (tags.includes(currentFilter))
+					{
+						matchesFilter = true;
+					}
+				}
+
+				// --- PASO 2: Comprobar si la tarjeta coincide con el TÉRMINO DE BÚSQUEDA ---
+				const cardTextContent = `${title} ${description} ${tags}`;
+				const matchesSearch = searchTerm === '' || cardTextContent.includes(searchTerm);
+
+				// --- PASO 3: Decisión final ---
+				if (matchesFilter && matchesSearch)
+				{
+					card.classList.remove('hr_hidden');
+					visibleCount++;
+				}
+				else
+				{
+					card.classList.add('hr_hidden');
+				}
+			});
+
+			if (visibleCount === 0)
+			{
+				noResults.classList.remove('hr_hidden');
+			}
+			else
+			{
+				noResults.classList.add('hr_hidden');
+			}
+		}
+
+		searchInput.addEventListener('input', filterCards);
+
+		filterButtons.forEach(button =>
+		{
+			button.addEventListener('click', () =>
+			{
+				filterButtons.forEach(btn => btn.classList.remove('hr_active'));
+				button.classList.add('hr_active');
+
+				currentFilter = button.dataset.filter;
+				filterCards();
+			});
+		});
+
+		document.addEventListener('keydown', (e) =>
+		{
+			if (e.key === '/' && document.activeElement !== searchInput)
+			{
+				e.preventDefault();
+				searchInput.focus();
+			}
+
+			if (e.key === 'Escape' && document.activeElement === searchInput)
+			{
+				searchInput.blur();
+			}
+		});
+
+		cards.forEach((card, index) =>
+		{
+			card.style.animationDelay = `${index * 0.05}s`;
+		});
+
+		filterCards();
+	});
+
+</script>

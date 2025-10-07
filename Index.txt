@@ -600,24 +600,31 @@
 <script>
 	document.addEventListener('DOMContentLoaded', () =>
 	{
-		const searchInput = document.getElementById('hr_searchInput');
-		const filterButtons = document.querySelectorAll('.hr_filter-btn');
-		const cards = document.querySelectorAll('.hr_card');
-		const noResults = document.querySelector('.hr_no-results');
+               const searchInput = document.getElementById('hr_searchInput');
+               const filterButtons = document.querySelectorAll('.hr_filter-btn');
+               const cards = document.querySelectorAll('.hr_card');
+               const noResults = document.querySelector('.hr_no-results');
 
-		let currentFilter = 'all';
+               function normalizeText(text) {
+                       return text
+                               .toLowerCase()
+                               .normalize('NFD')
+                               .replace(/[\u0300-\u036f]/g, '');
+               }
 
-		function filterCards()
-		{
-			const searchTerm = searchInput.value.toLowerCase().trim();
-			let visibleCount = 0;
+               let currentFilter = 'all';
 
-			cards.forEach(card =>
-			{
-				const tags = card.dataset.tags.toLowerCase();
-				const title = card.querySelector('h2').textContent.toLowerCase();
-				const description = card.querySelector('p').textContent.toLowerCase();
-				const status = card.dataset.status;
+               function filterCards()
+               {
+                       const searchTerm = normalizeText(searchInput.value.trim());
+                       let visibleCount = 0;
+
+                       cards.forEach(card =>
+                       {
+                               const tags = normalizeText(card.dataset.tags);
+                               const title = normalizeText(card.querySelector('h2').textContent);
+                               const description = normalizeText(card.querySelector('p').textContent);
+                               const status = card.dataset.status;
 
 				// --- PASO 1: Comprobar si la tarjeta coincide con el FILTRO del botón activo ---
 				let matchesFilter = false;
@@ -640,9 +647,9 @@
 					}
 				}
 
-				// --- PASO 2: Comprobar si la tarjeta coincide con el TÉRMINO DE BÚSQUEDA ---
-				const cardTextContent = `${title} ${description} ${tags}`;
-				const matchesSearch = searchTerm === '' || cardTextContent.includes(searchTerm);
+                               // --- PASO 2: Comprobar si la tarjeta coincide con el TÉRMINO DE BÚSQUEDA ---
+                               const cardTextContent = `${title} ${description} ${tags}`;
+                               const matchesSearch = searchTerm === '' || cardTextContent.includes(searchTerm);
 
 				// --- PASO 3: Decisión final ---
 				if (matchesFilter && matchesSearch)

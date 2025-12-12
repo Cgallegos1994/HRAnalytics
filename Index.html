@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consulta de Bandas Salariales</title>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+      :root{--bg:#0b1220;--surface:#0f172a;--muted:#94a3b8;--text:#e5e7eb;--primary:#3b82f6;--primary-600:#2563eb;--ring:#60a5fa33;--chip:#1f2937;--card-border:#ffffff14}
+      *{box-sizing:border-box}html,body{height:100%}
+      body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica Neue,Arial;color:var(--text);background:radial-gradient(1200px 600px at 10% -10%,#1e293b 0%,transparent 60%),radial-gradient(1000px 500px at 110% -10%,#0ea5e9 0%,transparent 60%),linear-gradient(180deg,#0b1220 0%,#0b1220 100%);padding:28px 16px 48px}
+      .container{max-width:1200px;margin:0 auto}
+      .header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+      .app-title{font-weight:800;letter-spacing:.2px;font-size:clamp(20px,3.2vw,28px)}
+      .subtitle{color:var(--muted);font-size:14px}
+      .user-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--chip);border:1px solid var(--card-border);border-radius:999px;font-size:13px}
+      .user-badge svg{opacity:.7}
+      .card{background:linear-gradient(180deg,#0f172a 0%,#0b1220 100%);border:1px solid var(--card-border);border-radius:16px;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+      .card+.card{margin-top:14px}
+      .filters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+      @media (max-width:768px){.filters-grid{grid-template-columns:1fr}}
+      .filter-group{display:flex;flex-direction:column}
+      .label{font-size:12px;color:var(--muted);margin:0 0 6px 2px;font-weight:600}
+      .select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--card-border);background:#0b1220;color:var(--text);outline:none;transition:.2s}
+      .select:focus{border-color:#60a5fa;box-shadow:0 0 0 4px var(--ring)}
+      .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+      .btn{padding:12px 20px;border-radius:12px;border:1px solid transparent;background:var(--primary);color:white;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+      .btn:hover{background:var(--primary-600)}.btn:active{transform:translateY(1px)}
+      .btn-ghost{background:transparent;border:1px solid var(--card-border);color:var(--text)}.btn-ghost:hover{background:#101827}
+      .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+      .chip{background:var(--chip);border:1px solid var(--card-border);color:var(--text);padding:6px 10px;border-radius:999px;font-size:12px;display:flex;gap:8px;align-items:center}
+      .chip .x{opacity:.7;cursor:pointer;text-decoration:none;color:inherit}
+      .chip .x:hover{opacity:1}
+      .error{background:#3b0d0d;border:1px solid #7f1d1d;color:#fecaca;padding:12px;border-radius:12px;margin-top:12px}
+      .summary{position:sticky;top:8px;z-index:5;background:linear-gradient(180deg,#0f172a 0%,#0b1220 100%);border:1px solid var(--card-border);border-radius:16px;padding:14px;margin:14px 0 16px;box-shadow:0 6px 20px rgba(0,0,0,.25);backdrop-filter:blur(4px)}
+      .summary-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+      .muted{color:var(--muted)}
+      .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px}
+      @media (max-width:920px){.kpis{grid-template-columns:repeat(3,1fr)}}
+      @media (max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}}
+      .tile{background:#0b1220;border:1px solid var(--card-border);border-radius:14px;padding:10px;text-align:center}
+      .tile .label{color:var(--muted);font-size:12px}.tile .value{font-weight:800;font-size:18px}
+      .footer-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+      @media (max-width:740px){.footer-kpis{grid-template-columns:1fr}}
+      .stat{background:#071b11;border:1px solid #14532d;border-radius:14px;padding:12px}.stat h4{margin:0 0 6px;color:#86efac}.stat p{margin:0;font-weight:800}
+      .h2{font-size:18px;font-weight:800;margin:20px 0 8px}
+      .card-emp{display:grid;grid-template-columns:1fr;gap:8px}
+      .emp-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+      .name{font-weight:800;font-size:16px}
+      .badges{display:flex;gap:8px;flex-wrap:wrap}
+      .badge{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--card-border)}
+      .badge.q0{background:#311414;color:#fecaca;border-color:#7f1d1d}
+      .badge.q1{background:#142431;color:#bae6fd;border-color:#075985}
+      .badge.q2{background:#12211c;color:#bbf7d0;border-color:#166534}
+      .badge.q3{background:#1f1a2a;color:#e9d5ff;border-color:#6b21a8}
+      .badge.q4{background:#2a1f1a;color:#fed7aa;border-color:#9a3412}
+      .badge.q5{background:#311414;color:#fecaca;border-color:#7f1d1d}
+      .info{color:var(--muted);font-size:13px}
+      .band-container{width:100%;height:32px;background:linear-gradient(90deg,#10b981,#f59e0b,#ef4444);margin-top:6px;border-radius:8px;position:relative;border:1px solid var(--card-border)}
+      .sba-marker{position:absolute;top:-6px;width:4px;height:44px;background:#93c5fd;border-radius:2px;transform:translateX(-50%);box-shadow:0 0 0 3px rgba(147,197,253,.25)}
+      .band-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+      .empty{text-align:center;color:var(--muted);padding:36px 12px}
+      .link{color:#93c5fd;text-decoration:none}
+      #viz-card .google-visualization-tooltip{background:#0f172a!important;color:#e5e7eb!important;border:1px solid #334155!important;border-radius:12px!important;padding:10px 12px!important;box-shadow:0 20px 40px rgba(0,0,0,.6)!important;z-index:9999!important}
+      #viz-card .google-visualization-tooltip .tt-title{font-weight:800;margin:0 0 4px;font-size:13px;letter-spacing:.2px}
+      #viz-card .google-visualization-tooltip .tt-row{font-size:12px;opacity:.95}
+      .select2-container--default .select2-selection--single{background:#0b1220;border:1px solid var(--card-border);border-radius:12px;height:48px;padding:10px 14px;color:var(--text)}
+      .select2-container--default .select2-selection--single .select2-selection__rendered{color:var(--text);line-height:28px;padding-left:0}
+      .select2-container--default .select2-selection--single .select2-selection__arrow{height:46px;right:10px}
+      .select2-container--default .select2-selection--single .select2-selection__arrow b{border-color:var(--muted) transparent transparent transparent;border-width:6px 5px 0 5px}
+      .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b{border-color:transparent transparent var(--muted) transparent;border-width:0 5px 6px 5px}
+      .select2-dropdown{background:#0f172a;border:1px solid var(--card-border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+      .select2-container--default .select2-search--dropdown .select2-search__field{background:#0b1220;border:1px solid var(--card-border);border-radius:8px;color:var(--text);padding:8px 12px}
+      .select2-container--default .select2-search--dropdown .select2-search__field:focus{border-color:#60a5fa;outline:none}
+      .select2-container--default .select2-results__option{color:var(--text);padding:10px 14px}
+      .select2-container--default .select2-results__option--highlighted[aria-selected]{background:var(--primary);color:white}
+      .select2-container--default .select2-results__option[aria-selected=true]{background:#1f2937;color:var(--text)}
+      .select2-container--default .select2-results__option--selectable{cursor:pointer}
+      .select2-container--default .select2-results>.select2-results__options{max-height:300px}
+      .select2-container--default.select2-container--focus .select2-selection--single{border-color:#60a5fa;box-shadow:0 0 0 4px var(--ring)}
+      .select2-container{width:100%!important}
+      .select2-selection__placeholder{color:var(--muted)!important}
+      .toggle{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+      .toggle input{accent-color:var(--primary)}
+      .level-toggles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+      .level-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;border:1px solid var(--card-border);background:var(--chip);color:var(--text);font-size:12px}
+      .level-chip input{accent-color:var(--primary)}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div>
+          <div class="app-title">Consulta de Bandas Salariales</div>
+          <div class="subtitle">Filtra por múltiples criterios y visualiza posición por banda con KPIs clave.</div>
+        </div>
+        <div class="user-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span><?= userEmail ?></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <form method="GET" action="<?= baseUrl ?>" id="searchForm">
+          <div class="filters-grid">
+            <? (filters || []).forEach(function(filter){ ?>
+              <div class="filter-group">
+                <label class="label" for="<?= filter.key ?>"><?= filter.label ?></label>
+                <select class="select select2-filter" id="<?= filter.key ?>" name="<?= filter.key ?>">
+                  <option value=""><?= filter.emptyLabel ?></option>
+                  <? (filter.options || []).forEach(function(opt){ ?>
+                    <option value="<?= opt ?>" <?= (filter.selected === opt ? 'selected' : '') ?>><?= opt ?></option>
+                  <? }); ?>
+                </select>
+              </div>
+            <? }); ?>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Buscar</button>
+            <a class="btn btn-ghost" href="<?= baseUrl ?>">Limpiar Todos</a>
+          </div>
+
+          <div class="chips">
+            <? (filters || []).forEach(function(filter){
+              if (filter.selected) { ?>
+                <span class="chip">
+                  <?= filter.label ?>: <strong><?= filter.selected ?></strong>
+                  <a class="x" href="<?= baseUrl ?>?<?= filter.removeQuery ?>" title="Quitar">✕</a>
+                </span>
+            <? }}); ?>
+          </div>
+
+          <? if (errorMsg) { ?>
+            <div class="error" role="alert"><?= errorMsg ?></div>
+          <? } ?>
+        </form>
+      </div>
+
+      <? if (hasFilters && resumen) { ?>
+        <div class="summary" aria-live="polite">
+          <div class="summary-head">
+            <div class="muted"><strong>Resumen</strong> · Total: <strong><?= resumen.total ?></strong></div>
+            <div class="muted">
+              Coste Equidad: <strong>€ <?= resumen.costeEquidad ?></strong> ·
+              Exceso Banda: <strong>€ <?= resumen.excesoBanda ?></strong> ·
+              Incompletos: <strong><?= resumen.incompletos ?></strong>
+            </div>
+          </div>
+          <div class="kpis">
+            <? (resumen.posiciones || []).forEach(function(item){ ?>
+              <div class="tile">
+                <div class="label"><?= item.label ?></div>
+                <div class="value"><?= item.count ?></div>
+              </div>
+            <? }); ?>
+          </div>
+          <div class="footer-kpis">
+            <div class="stat"><h4>Coste de Equidad (hasta mínimo)</h4><p>€ <?= resumen.costeEquidad ?></p></div>
+            <div class="stat"><h4>Exceso de Banda (sobre máximo)</h4><p>€ <?= resumen.excesoBanda ?></p></div>
+            <div class="stat"><h4>Personas con datos incompletos</h4><p><?= resumen.incompletos ?></p></div>
+          </div>
+        </div>
+      <? } ?>
+
+      <? if (empleados && empleados.length > 1) { ?>
+        <div class="card" id="viz-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="font-weight:800">Distribución por Nivel</div>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+              <div class="muted" style="font-size:13px">Niveles visibles:</div>
+              <div id="levelControls" class="level-toggles" aria-label="Niveles visibles"></div>
+              <button class="btn btn-ghost" type="button" id="downloadFull">Descargar PNG</button>
+              <div class="muted">R: <strong id="rValue">—</strong> · R²: <strong id="r2Value">—</strong> · n: <strong id="nPoints">0</strong></div>
+            </div>
+          </div>
+          <div id="vizWrap" style="position:relative;margin-top:10px">
+            <div id="overlayLayer" style="position:absolute;inset:0;z-index:2;pointer-events:none"></div>
+            <div id="mixedChart" style="height:420px;position:relative;z-index:1"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px" class="muted">
+            <span>Y: SBA 100% · X: Nivel · Cajas Rosas = Empleados en Banda (Q1–Q3) · Línea Azul = Punto Medio por Nivel · Tendencia exponencial · Puntos por Q:</span>
+            <span class="badge q1">Q1</span><span class="badge q2">Q2</span><span class="badge q3">Q3</span><span class="badge q4">Q4</span><span class="badge q0">Q0</span><span class="badge q5">Q5</span>
+          </div>
+        </div>
+      <? } ?>
+
+      <? if (empleados && empleados.length > 0) { ?>
+        <div class="h2">Resultados (<?= empleados.length ?>)</div>
+        <? empleados.forEach(function(emp) { ?>
+          <div class="card card-emp">
+            <div class="emp-head">
+              <div class="name"><?= emp.nombre || '(Sin nombre)' ?></div>
+              <div class="badges">
+                <? if (emp.puesto) { ?><span class="badge">Puesto: <?= emp.puesto ?></span><? } ?>
+                <? if (emp.division) { ?><span class="badge">División: <?= emp.division ?></span><? } ?>
+                <? if (emp.direccion) { ?><span class="badge">Dirección: <?= emp.direccion ?></span><? } ?>
+                <? if (emp.rol) { ?><span class="badge">Rol: <?= emp.rol ?></span><? } ?>
+                <? if (emp.familia) { ?><span class="badge">Familia: <?= emp.familia ?></span><? } ?>
+                <? if (emp.departamento) { ?><span class="badge">Depto: <?= emp.departamento ?></span><? } ?>
+                <? if (emp.seccion) { ?><span class="badge">Sección: <?= emp.seccion ?></span><? } ?>
+                <? if (emp.empresa) { ?><span class="badge">Empresa: <?= emp.empresa ?></span><? } ?>
+                <? if (emp.posicion) { ?><span class="badge">Posición: <?= emp.posicion ?></span><? } ?>
+                <? if (emp.nivel) { ?><span class="badge">Nivel: <?= emp.nivel ?></span><? } ?>
+                <span class="badge q<?= (emp.qLabel||'').toLowerCase() ?>">Q: <?= emp.qLabel ?></span>
+              </div>
+            </div>
+            <div class="info">
+              <strong>SBA 100%:</strong> <?= emp.sbaStr ?> € ·
+              <strong>Posición en banda:</strong> <?= emp.posicionStr ?>%
+            </div>
+            <div class="band-container">
+              <? if (emp.posicionNum !== null) { ?>
+                <div class="sba-marker" style="left:<?= emp.posicionNum ?>%"></div>
+              <? } ?>
+            </div>
+            <div class="band-labels">
+              <span><?= emp.inicioStr ?> €</span><span><?= emp.medioStr ?> €</span><span><?= emp.finalStr ?> €</span>
+            </div>
+            <? if (emp.aviso) { ?><div class="info">⚠️ <?= emp.aviso ?></div><? } ?>
+          </div>
+        <? }); ?>
+      <? } else if (hasFilters) { ?>
+        <div class="card empty">
+          <div style="display:flex;gap:10px;justify-content:center;align-items:center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <div>No hay resultados con los filtros aplicados. <a class="link" href="<?= baseUrl ?>">Limpiar filtros</a></div>
+          </div>
+        </div>
+      <? } ?>
+    </div>
+
+    <!-- jQuery (requerido por Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+      // Inicializar Select2 con optimizaciones
+      $(document).ready(function() {
+        $('.select2-filter').select2({
+          placeholder: 'Selecciona...',
+          allowClear: true,
+          width: '100%',
+          minimumResultsForSearch: 5,
+          dropdownAutoWidth: false,
+          language: {
+            noResults: function() { return "No se encontraron resultados"; },
+            searching: function() { return "Buscando..."; }
+          }
+        });
+
+        var submitTimeout;
+        $('.select2-filter').on('change', function() {
+          clearTimeout(submitTimeout);
+          submitTimeout = setTimeout(function() {
+            $('#searchForm').submit();
+          }, 100);
+        });
+      });
+    </script>
+
+    <? if (empleados && empleados.length > 1) { ?>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+      (function(){
+        var EMP = <?!= JSON.stringify(empleados) ?>;
+        var EXCLUDED_DIRECTOR_LEVELS = [
+          'Corp_Comité de Dirección / Director ejecutivo',
+          'Negocio_Director General',
+          'Negocio_Director Nivel 2',
+          'Negocio_Comité de Dirección / Director ejecutivo',
+          'Sistemas_Comité de Dirección / Director ejecutivo'
+        ];
+        var hiddenLevels = new Set();
+
+        var QCOL = {
+          Q0: '#ef4444',
+          Q1: '#0ea5e9', 
+          Q2: '#22c55e',
+          Q3: '#8b5cf6',
+          Q4: '#f59e0b',
+          Q5: '#ef4444'
+        };
+
+        var fmtEuro0 = function(n) {
+          return Number.isFinite(n) ? new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'EUR',
+            maximumFractionDigits: 0
+          }).format(n) : '—';
+        };
+
+        var euroToNum = function(s) {
+          if (s == null) return NaN;
+          if (typeof s === 'number') return s;
+          var t = String(s).replace(/[ €]/g, '').replace(/\./g, '').replace(/,/g, '.');
+          var n = parseFloat(t);
+          return isNaN(n) ? NaN : n;
+        };
+
+        var num = function(n) {
+          return (n == null || isNaN(n)) ? NaN : Number(n);
+        };
+
+        var quantile = function(arr, q) {
+          var a = arr.filter(Number.isFinite).sort(function(x, y) { return x - y; });
+          if (!a.length) return NaN;
+          var pos = (a.length - 1) * q;
+          var b = Math.floor(pos);
+          var r = pos - b;
+          return a[b + 1] !== undefined ? a[b] + r * (a[b + 1] - a[b]) : a[b];
+        };
+
+        var median = function(arr) {
+          return quantile(arr, 0.5);
+        };
+
+        var pretty = function(s) {
+          return String(s || '').replace(/_/g, ' ');
+        };
+
+        function pearson(xs, ys) {
+          var n = xs.length;
+          if (n < 2) return {r: null, n: n};
+          var sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+          for (var i = 0; i < n; i++) {
+            var x = xs[i], y = ys[i];
+            sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y;
+          }
+          var mx = sx / n, my = sy / n;
+          var cov = sxy / n - mx * my;
+          var vx = sxx / n - mx * mx;
+          var vy = syy / n - my * my;
+          var d = Math.sqrt(vx * vy);
+          return d === 0 ? {r: null, n: n} : {r: cov / d, n: n};
+        }
+
+        // Procesar datos base
+        var points = [];
+        var nivelesMap = new Map();
+
+        for (var i = 0; i < EMP.length; i++) {
+          var e = EMP[i];
+          var nivel = (e.nivel || '').toString();
+          var sba = num(e.sbaNum ?? euroToNum(e.sbaStr));
+          if (!nivel || !Number.isFinite(sba)) continue;
+
+          var punto = {
+            nivel: nivel,
+            sba: sba,
+            inicio: num(e.inicioNum ?? euroToNum(e.inicioStr)),
+            final: num(e.finalNum ?? euroToNum(e.finalStr)),
+            medio: num(e.medioNum ?? euroToNum(e.medioStr)),
+            pos: num(e.posicionNum),
+            q: e.qLabel || '',
+            nombre: e.nombre || ''
+          };
+
+          points.push(punto);
+          if (!nivelesMap.has(nivel)) nivelesMap.set(nivel, []);
+          nivelesMap.get(nivel).push(punto);
+        }
+
+        function buildChartData(excludedLevels) {
+          var rows = [];
+          var ticks = [];
+          var puntosMedios = [];
+          var niveles = [];
+          var nivelIndex = new Map();
+
+          var nivelesConPuntoMedio = [];
+          var keys = Array.from(nivelesMap.keys());
+          for (var i = 0; i < keys.length; i++) {
+            var nivel = keys[i];
+            if (excludedLevels.has(nivel)) continue;
+            var empleadosNivel = nivelesMap.get(nivel);
+            var puntosMedioNivel = [];
+            for (var j = 0; j < empleadosNivel.length; j++) {
+              var emp = empleadosNivel[j];
+              if (Number.isFinite(emp.medio)) puntosMedioNivel.push(emp.medio);
+            }
+            if (puntosMedioNivel.length > 0) {
+              nivelesConPuntoMedio.push({ nivel: nivel, puntoMedio: median(puntosMedioNivel) });
+            }
+          }
+
+          nivelesConPuntoMedio.sort(function(a, b) { return a.puntoMedio - b.puntoMedio; });
+          niveles = nivelesConPuntoMedio.map(function(item) { return item.nivel; });
+          for (var n = 0; n < niveles.length; n++) {
+            nivelIndex.set(niveles[n], n + 1);
+            ticks.push({ v: n + 1, f: pretty(niveles[n]) });
+          }
+
+          for (var p = 0; p < points.length; p++) {
+            var point = points[p];
+            if (excludedLevels.has(point.nivel)) continue;
+            var x = nivelIndex.get(point.nivel);
+            if (!Number.isFinite(x) || !Number.isFinite(point.sba)) continue;
+            var style = 'point { fill-color: ' + (QCOL[point.q] || '#60a5fa') + '; }';
+            var tip = '<div class="tt"><div class="tt-title">' +
+              (point.nombre || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') +
+              '</div><div class="tt-row">Nivel: ' + pretty(point.nivel) +
+              '</div><div class="tt-row">SBA: ' + fmtEuro0(point.sba) +
+              '</div><div class="tt-row">Posición: ' + (Number.isFinite(point.pos) ? point.pos.toFixed(2) : '—') + '%' +
+              '</div><div class="tt-row">Q: ' + (point.q || '—') + '</div></div>';
+            rows.push([x, point.sba, style, tip]);
+          }
+
+          var xs = [], lys = [];
+          for (var r = 0; r < rows.length; r++) {
+            var row = rows[r];
+            if (row[1] > 0) {
+              xs.push(row[0]);
+              lys.push(Math.log(row[1]));
+            }
+          }
+          var pearsonResult = pearson(xs, lys);
+          var rValue = pearsonResult.r;
+          var r2Value = (rValue == null) ? null : (rValue * rValue);
+
+          return {
+            rows: rows,
+            ticks: ticks,
+            niveles: niveles,
+            nivelIndex: nivelIndex,
+            r: rValue,
+            r2: r2Value,
+            n: pearsonResult.n,
+            puntosMedios: nivelesConPuntoMedio
+          };
+        }
+
+        var chartState = buildChartData(hiddenLevels);
+        var chart, dataTable, options;
+
+        function build() {
+          dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('number', 'Nivel #');
+          dataTable.addColumn('number', 'SBA 100%');
+          dataTable.addColumn({type: 'string', role: 'style'});
+          dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
+          dataTable.addRows(chartState.rows);
+
+          options = {
+            backgroundColor: 'transparent',
+            legend: {position: 'top', textStyle: {color: '#e5e7eb'}},
+            tooltip: {isHtml: true, trigger: 'focus'},
+            pointSize: 5,
+            trendlines: {
+              0: {
+                type: 'exponential',
+                color: '#a0c3ff',
+                lineWidth: 2,
+                opacity: 0.9,
+                visibleInLegend: true
+              }
+            },
+            hAxis: {
+              title: 'Nivel',
+              ticks: chartState.ticks,
+              showTextEvery: 1,
+              slantedText: true,
+              slantedTextAngle: 30,
+              textStyle: {color: '#e5e7eb', fontSize: 11},
+              titleTextStyle: {color: '#e5e7eb'},
+              viewWindow: {min: 0.5}
+            },
+            vAxis: {
+              title: 'SBA 100% (€)',
+              format: 'short',
+              textStyle: {color: '#e5e7eb'},
+              titleTextStyle: {color: '#e5e7eb'},
+              gridlines: {color: '#1f2937', count: -1},
+              minorGridlines: {color: '#111827'}
+            },
+            chartArea: {left: 70, top: 32, right: 20, bottom: 120}
+          };
+        }
+
+        function draw() {
+          if (!chart) {
+            chart = new google.visualization.ScatterChart(document.getElementById('mixedChart'));
+          }
+          google.visualization.events.removeAllListeners(chart);
+          google.visualization.events.addListener(chart, 'ready', drawOverlay);
+          chart.draw(dataTable, options);
+
+          document.getElementById('rValue').textContent = (chartState.r == null ? '—' : (Math.round(chartState.r * 10000) / 10000).toString());
+          document.getElementById('r2Value').textContent = (chartState.r2 == null ? '—' : (Math.round(chartState.r2 * 10000) / 10000).toString());
+          document.getElementById('nPoints').textContent = String(chartState.n || 0);
+        }
+
+        function init() {
+          build();
+          draw();
+
+          var resizeTimer;
+          var handleResize = function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() { build(); draw(); }, 150);
+          };
+          window.addEventListener('resize', handleResize);
+
+          var wrap = document.getElementById('vizWrap');
+          if ('ResizeObserver' in window && wrap) {
+            var ro = new ResizeObserver(handleResize);
+            ro.observe(wrap);
+          }
+
+          var levelControls = document.getElementById('levelControls');
+          if (levelControls) {
+            EXCLUDED_DIRECTOR_LEVELS.forEach(function(level, idx) {
+              var wrapper = document.createElement('label');
+              wrapper.className = 'level-chip';
+              var input = document.createElement('input');
+              input.type = 'checkbox';
+              input.checked = true;
+              input.id = 'lvl-' + idx;
+              input.setAttribute('data-level', level);
+              wrapper.appendChild(input);
+              var span = document.createElement('span');
+              span.textContent = level;
+              wrapper.appendChild(span);
+              levelControls.appendChild(wrapper);
+
+              input.addEventListener('change', function() {
+                if (input.checked) {
+                  hiddenLevels.delete(level);
+                } else {
+                  hiddenLevels.add(level);
+                }
+                chartState = buildChartData(hiddenLevels);
+                build();
+                draw();
+              });
+            });
+          }
+
+          document.getElementById('downloadFull').onclick = function() {
+            var wrap = document.getElementById('vizWrap');
+            setTimeout(function() {
+              html2canvas(wrap, {
+                scale: Math.max(2, window.devicePixelRatio || 1),
+                backgroundColor: null,
+                useCORS: true
+              })
+              .then(function(canvas) {
+                var a = document.createElement('a');
+                a.href = canvas.toDataURL('image/png');
+                a.download = 'nivel_sba.png';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              })
+              .catch(function() {
+                alert('No pude generar la imagen.');
+              });
+            }, 50);
+          };
+        }
+
+        function drawOverlay() {
+          var overlay = document.getElementById('overlayLayer');
+          if (!overlay) return;
+          overlay.innerHTML = '';
+
+          var cli = chart.getChartLayoutInterface();
+          var area = cli.getChartAreaBoundingBox();
+          overlay.style.left = area.left + 'px';
+          overlay.style.top = area.top + 'px';
+          overlay.style.width = area.width + 'px';
+          overlay.style.height = area.height + 'px';
+
+            var group = new Map();
+            for (var i = 0; i < chartState.niveles.length; i++) {
+              group.set(chartState.niveles[i], []);
+            }
+            for (var j = 0; j < points.length; j++) {
+              var point = points[j];
+              if (hiddenLevels.has(point.nivel)) continue;
+              if (point && point.nivel && group.has(point.nivel)) {
+                group.get(point.nivel).push(point);
+              }
+            }
+
+          var spacing = Infinity;
+          for (var k = 1; k < chartState.niveles.length; k++) {
+            var d = cli.getXLocation(chartState.nivelIndex.get(chartState.niveles[k])) - cli.getXLocation(chartState.nivelIndex.get(chartState.niveles[k - 1]));
+            if (d > 0 && d < spacing) spacing = d;
+          }
+          if (!Number.isFinite(spacing)) spacing = area.width / Math.max(1, chartState.niveles.length);
+          var boxW = Math.max(14, spacing * 0.6);
+
+          var midPts = [];
+          for (var n = 0; n < chartState.niveles.length; n++) {
+            var nl = chartState.niveles[n];
+            if (!nl || !group.has(nl)) continue;
+
+            var arr = group.get(nl);
+            if (!arr || !arr.length) continue;
+
+            var empleadosEnBanda = [];
+            for (var t = 0; t < arr.length; t++) {
+              var p = arr[t];
+              if (p && (p.q === 'Q1' || p.q === 'Q2' || p.q === 'Q3')) {
+                empleadosEnBanda.push(p);
+              }
+            }
+
+            if (empleadosEnBanda.length === 0) {
+              var inicioNivel = NaN, finalNivel = NaN;
+              for (var s = 0; s < arr.length; s++) {
+                if (Number.isFinite(arr[s].inicio) && Number.isFinite(arr[s].final)) {
+                  inicioNivel = arr[s].inicio;
+                  finalNivel = arr[s].final;
+                  break;
+                }
+              }
+
+              if (Number.isFinite(inicioNivel) && Number.isFinite(finalNivel)) {
+                var cx = cli.getXLocation(chartState.nivelIndex.get(nl));
+                var yTop = cli.getYLocation(inicioNivel);
+                var yBot = cli.getYLocation(finalNivel);
+
+                var rect = document.createElement('div');
+                rect.style.position = 'absolute';
+                rect.style.left = (cx - area.left - boxW / 2) + 'px';
+                rect.style.top = (Math.min(yTop, yBot) - area.top) + 'px';
+                rect.style.width = boxW + 'px';
+                rect.style.height = Math.max(Math.abs(yBot - yTop), 3) + 'px';
+                rect.style.background = '#ff1e70';
+                rect.style.opacity = '0.3';
+                rect.style.borderRadius = '4px';
+                rect.style.border = '1px dashed #ff1e70';
+                overlay.appendChild(rect);
+              }
+              continue;
+            }
+
+            var sbasEnBanda = [];
+            for (var b = 0; b < empleadosEnBanda.length; b++) {
+              var sba = empleadosEnBanda[b].sba;
+              if (Number.isFinite(sba)) sbasEnBanda.push(sba);
+            }
+            if (sbasEnBanda.length === 0) continue;
+
+            var minSba = Math.min.apply(null, sbasEnBanda);
+            var maxSba = Math.max.apply(null, sbasEnBanda);
+            if (!Number.isFinite(minSba) || !Number.isFinite(maxSba)) continue;
+
+            var cxLevel = cli.getXLocation(chartState.nivelIndex.get(nl));
+            var yTopLevel = cli.getYLocation(minSba);
+            var yBotLevel = cli.getYLocation(maxSba);
+
+            var rectBand = document.createElement('div');
+            rectBand.style.position = 'absolute';
+            rectBand.style.left = (cxLevel - area.left - boxW / 2) + 'px';
+            rectBand.style.top = (Math.min(yTopLevel, yBotLevel) - area.top) + 'px';
+            rectBand.style.width = boxW + 'px';
+            rectBand.style.height = Math.max(Math.abs(yBotLevel - yTopLevel), 3) + 'px';
+            rectBand.style.background = '#ff1e70';
+            rectBand.style.opacity = '0.6';
+            rectBand.style.borderRadius = '4px';
+            rectBand.style.border = '1px solid #ff1e70';
+            overlay.appendChild(rectBand);
+          }
+
+          if (chartState.puntosMedios && chartState.puntosMedios.length > 0) {
+            for (var m = 0; m < chartState.puntosMedios.length; m++) {
+              var pm = chartState.puntosMedios[m];
+              var nivelIndexValue = chartState.nivelIndex.get(pm.nivel);
+              if (!Number.isFinite(nivelIndexValue) || !Number.isFinite(pm.puntoMedio)) continue;
+              var cxMid = cli.getXLocation(nivelIndexValue);
+              var yMid = cli.getYLocation(pm.puntoMedio);
+              if (Number.isFinite(cxMid) && Number.isFinite(yMid)) {
+                midPts.push([cxMid - area.left, yMid - area.top]);
+              }
+            }
+          }
+
+          if (midPts.length > 1) {
+            midPts.sort(function(a, b) { return a[0] - b[0]; });
+            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', area.width);
+            svg.setAttribute('height', area.height);
+            svg.style.position = 'absolute';
+            svg.style.left = '0';
+            svg.style.top = '0';
+            svg.style.pointerEvents = 'none';
+
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            var pathData = 'M ' + midPts.map(function(p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' L ');
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', '#60a5fa');
+            path.setAttribute('stroke-width', '3');
+            path.setAttribute('opacity', '0.9');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(path);
+            overlay.appendChild(svg);
+          }
+        }
+
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(init);
+      })();
+    </script>
+    <? } ?>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acceso Denegado</title>
+    <style>
+      :root{--bg:#0b1220;--surface:#0f172a;--text:#e5e7eb;--muted:#94a3b8;--error:#ef4444;--error-bg:#3b0d0d;--error-border:#7f1d1d}
+      *{box-sizing:border-box}html,body{height:100%}
+      body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica Neue,Arial;color:var(--text);background:radial-gradient(1200px 600px at 50% -10%,#1e293b 0%,transparent 60%),linear-gradient(180deg,#0b1220 0%,#0b1220 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+      .container{max-width:500px;width:100%;text-align:center}
+      .icon-wrapper{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;background:var(--error-bg);border:2px solid var(--error-border);border-radius:50%;margin-bottom:24px}
+      .icon-wrapper svg{color:var(--error)}
+      h1{font-size:28px;font-weight:800;margin:0 0 12px;letter-spacing:.2px}
+      .message{color:var(--muted);font-size:15px;line-height:1.6;margin:0 0 24px}
+      .error-box{background:var(--error-bg);border:1px solid var(--error-border);border-radius:12px;padding:16px;margin:24px 0;text-align:left}
+      .error-box strong{display:block;margin-bottom:8px;color:#fecaca}
+      .error-box p{margin:0;font-size:14px;color:#fca5a5;line-height:1.5}
+      .btn{display:inline-block;padding:12px 24px;background:#3b82f6;color:white;text-decoration:none;border-radius:12px;font-weight:700;transition:.2s}
+      .btn:hover{background:#2563eb}
+      .footer{margin-top:32px;font-size:13px;color:var(--muted)}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon-wrapper">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      </div>
+
+      <h1><?= title || 'Acceso Denegado' ?></h1>
+
+      <p class="message">No tienes permisos para acceder a esta aplicación.</p>
+
+      <div class="error-box">
+        <strong>Detalles:</strong>
+        <p style="word-break:break-word"><?!= message || 'Tu cuenta no está autorizada para consultar esta información.' ?></p>
+      </div>
+
+      <p class="message">Si crees que deberías tener acceso, contacta al administrador del sistema para que añada tu email a la lista de usuarios autorizados.</p>
+
+      <div class="footer">
+        <p>Consulta de Bandas Salariales · Sistema de Recursos Humanos</p>
+      </div>
+    </div>
+  </body>
+</html>
